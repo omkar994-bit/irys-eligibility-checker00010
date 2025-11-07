@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Irys Eternals — Pioneer Checker</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <style>
+    html,body {height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui;-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;background:linear-gradient(180deg,rgba(2,6,23,0.75),rgba(2,6,23,0.85));}
+    .page-root{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px;box-sizing:border-box;background-image:url('https://pbs.twimg.com/media/G4jRVjfa8AQphcx?format=jpg&name=large');background-size:cover;background-position:center;}
+    .card{width:100%;max-width:820px;border-radius:20px;padding:28px;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.06);box-shadow:0 10px 40px rgba(2,6,23,0.65);color:#fff;}
+    .card-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;}
+    .title-left{display:flex;align-items:center;gap:14px;}
+    .logo-small{width:56px;height:56px;border-radius:10px;object-fit:cover;border:2px solid rgba(255,255,255,0.08);box-shadow:0 8px 22px rgba(2,6,23,0.6);}
+    .title-block{position:relative;z-index:2;display:inline-block;}
+    .title-flame{position:absolute;left:-12px;top:-18px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(255,140,0,0.6),rgba(255,69,0,0));filter:blur(28px);z-index:1;pointer-events:none;animation:flame 3s ease-in-out infinite;}
+    @keyframes flame{0%{transform:scale(1) translateY(0);opacity:.85}50%{transform:scale(1.12) translateY(-6px);opacity:1}100%{transform:scale(1) translateY(0);opacity:.85}}
+    .title-styled{font-size:30px;margin:0;color:#fff;letter-spacing:.02em;position:relative;z-index:3;text-shadow:0 0 12px #f97316,0 0 24px #fb923c,0 0 40px #f59e0b;animation:glowText 2.8s ease-in-out infinite;}
+    @keyframes glowText{0%,100%{text-shadow:0 0 12px #f97316,0 0 20px #fb923c,0 0 40px #f59e0b;}50%{text-shadow:0 0 25px #fb923c,0 0 50px #fbbf24,0 0 80px #f59e0b;}}
+    .pioneer-badge{margin-top:6px;font-size:12px;color:#fff;background:rgba(255,140,0,0.12);padding:6px 10px;border-radius:10px;display:inline-block;font-weight:600;}
+    .clear-btn{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.9);border:1px solid rgba(255,255,255,0.06);padding:8px;border-radius:8px;cursor:pointer;transition:transform .32s ease,background .25s ease;}
+    .clear-btn:hover{transform:rotate(90deg);background:rgba(255,255,255,0.09);}
+    .label{color:rgba(255,255,255,0.9);display:block;margin-bottom:10px;font-weight:600;}
+    .controls-row{display:flex;gap:12px;align-items:center;}
+    .text-input{flex:1;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);color:#fff;outline:none;transition:box-shadow .22s ease,transform .16s ease;}
+    .text-input:focus{box-shadow:0 8px 26px rgba(245,158,11,0.18);transform:translateY(-1px);}
+    .btn-check{padding:10px 16px;border-radius:12px;background:linear-gradient(90deg,#fb923c,#ffb86b);color:#111;font-weight:700;border:none;cursor:pointer;transition:transform .2s ease,box-shadow .2s;}
+    .btn-check:hover{transform:scale(1.05);box-shadow:0 10px 30px rgba(245,158,11,0.18);}
+    .result{margin-top:16px;}
+    .muted{color:rgba(255,255,255,0.6);font-size:12px;}
+    .value{color:#fff;font-weight:600;margin-top:6px;}
+    .result-badge{margin-top:12px;}
+    .eligible{background:linear-gradient(90deg,#f59e0b,#fb923c);color:#111;padding:10px 14px;border-radius:999px;font-weight:700;box-shadow:0 10px 40px rgba(245,158,11,0.16);display:inline-block;}
+    .not-eligible{background:linear-gradient(90deg,#ef4444,#fb7185);color:#fff;padding:10px 14px;border-radius:999px;font-weight:700;box-shadow:0 8px 32px rgba(239,68,68,0.12);display:inline-block;}
+    .card-footer{margin-top:18px;text-align:right;color:rgba(255,255,255,0.6);font-size:13px;}
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+    const {useState}=React;
+    const PIONEER_USERNAMES=['0xgala','lew_xyz','josh_benaron','dmaconchain','xaitoshi_','misterwestwol','pukerrainbrow','quang250802','retreeq_','0xchine','0xteecrypt'];
+    const normalize=n=>!n?'':String(n).trim().replace(/^@+/,'').toLowerCase();
+    function App(){
+      const [input,setInput]=useState('');const [singleResult,setSingleResult]=useState(null);
+      function checkSingle(){const n=normalize(input);if(!n)return setSingleResult(null);const eligible=PIONEER_USERNAMES.includes(n);setSingleResult({username:input,normalized:n,eligible});}
+      return React.createElement('div',{className:'page-root'},
+        React.createElement('div',{className:'card'},
+          React.createElement('header',{className:'card-header'},
+            React.createElement('div',{className:'title-left'},
+              React.createElement('img',{src:'https://pbs.twimg.com/profile_images/1879776802563891200/cdpcRzVY_400x400.jpg',alt:'Irys logo',className:'logo-small'}),
+              React.createElement('div',{className:'title-block'},
+                React.createElement('div',{className:'title-flame'}),
+                React.createElement('h1',{className:'title-styled'},'𝙸𝚁𝚈𝚂 𝙴𝚃𝙴𝚁𝙽𝙰𝙻𝚂'),
+                React.createElement('div',{className:'pioneer-badge'},'🔥 𝙿𝙸𝙾𝙽𝙴𝙴𝚁 🔥'))),
+            React.createElement('button',{className:'clear-btn',onClick:()=>{setInput('');setSingleResult(null);}},'✕')),
+          React.createElement('main',null,
+            React.createElement('section',{className:'controls'},
+              React.createElement('label',{className:'label'},'Enter X username and press Check'),
+              React.createElement('div',{className:'controls-row'},
+                React.createElement('input',{value:input,onChange:e=>setInput(e.target.value),onKeyDown:e=>e.key==='Enter'&&checkSingle(),placeholder:'Enter X username (e.g. @0xGala)',className:'text-input'}),
+                React.createElement('button',{className:'btn-check',onClick:checkSingle},'Check')),
+              singleResult&&React.createElement('div',{className:'result'},
+                React.createElement('div',null,
+                  React.createElement('div',{className:'muted'},'Input:'),' ',React.createElement('span',{className:'value'},singleResult.username)),
+                React.createElement('div',null,
+                  React.createElement('div',{className:'muted'},'Normalized:'),' ',React.createElement('span',{className:'value'},singleResult.normalized)),
+                React.createElement('div',{className:'result-badge'},
+                  singleResult.eligible?
+                    React.createElement('div',{className:'eligible'},'🔥 ELIGIBLE — 𝙿𝙸𝙾𝙽𝙴𝙴𝚁 🔥'):
+                    React.createElement('div',{className:'not-eligible'},'✖ NOT ELIGIBLE'))))),
+          React.createElement('footer',{className:'card-footer'},'Made with ❤️')));
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
+  </script>
+</body>
+</html>
